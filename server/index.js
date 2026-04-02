@@ -2,9 +2,10 @@ const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
-const mongoose = require("mongoose");
 require("dotenv").config();
 
+const connectDB = require("./config/db");
+const errorHandler = require("./middleware/errorHandler");
 const predictionRoutes = require("./routes/predictions");
 const metricsRoutes = require("./routes/metrics");
 
@@ -24,20 +25,28 @@ const limiter = rateLimit({
 });
 app.use("/api/", limiter);
 
-// MongoDB connection
-mongoose
-  .connect(process.env.MONGODB_URI || "mongodb://localhost:27017/loan_predictor")
-  .then(() => console.log("MongoDB connected"))
-  .catch((err) => console.error("MongoDB connection error:", err));
-
 // Routes
 app.use("/api/predictions", predictionRoutes);
 app.use("/api/metrics", metricsRoutes);
 
 app.get("/api/health", (_req, res) => {
-  res.json({ status: "ok" });
+  res.json({ status: "ok", timestamp: new Date().toISOString() });
 });
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+// Global error handler (must be registered after routes)
+app.use(errorHandler);
+
+// Start server
+async function start() {
+  try {
+    await connectDB();
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+    });
+  } catch (err) {
+    console.error("Failed to start server:", err.message);
+    process.exit(1);
+  }
+}
+
+start();
