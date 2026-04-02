@@ -60,6 +60,12 @@ body::after {
   100% { transform: translate(40px, -30px); }
 }
 
+/* Native select options */
+select option {
+  background-color: #0c0c24;
+  color: #e2e8f0;
+}
+
 /* Scrollbar */
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
