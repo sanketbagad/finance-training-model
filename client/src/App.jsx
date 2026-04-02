@@ -1,39 +1,24 @@
-import React, { useState } from "react";
-import PredictionForm from "./components/PredictionForm";
-import ModelComparison from "./components/ModelComparison";
-import PredictionHistory from "./components/PredictionHistory";
-
-const TABS = [
-  { key: "predict", label: "Predict" },
-  { key: "compare", label: "Model Comparison" },
-  { key: "history", label: "History" },
-];
+import { useState } from "react";
+import Header from "./components/layout/Header";
+import Footer from "./components/layout/Footer";
+import PredictionForm from "./components/features/PredictionForm";
+import ModelComparison from "./components/features/ModelComparison";
+import PredictionHistory from "./components/features/PredictionHistory";
 
 export default function App() {
   const [activeTab, setActiveTab] = useState("predict");
 
   return (
-    <div className="app">
-      <header className="app-header">
-        <h1>Loan Approval Predictor</h1>
-        <p>Compare KNN vs Random Forest predictions in real-time</p>
-      </header>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-4">
+      <Header activeTab={activeTab} onTabChange={setActiveTab} />
 
-      <nav className="tabs">
-        {TABS.map((t) => (
-          <button
-            key={t.key}
-            className={`tab-btn ${activeTab === t.key ? "active" : ""}`}
-            onClick={() => setActiveTab(t.key)}
-          >
-            {t.label}
-          </button>
-        ))}
-      </nav>
+      <main className="space-y-6">
+        {activeTab === "predict" && <PredictionForm />}
+        {activeTab === "compare" && <ModelComparison />}
+        {activeTab === "history" && <PredictionHistory />}
+      </main>
 
-      {activeTab === "predict" && <PredictionForm />}
-      {activeTab === "compare" && <ModelComparison />}
-      {activeTab === "history" && <PredictionHistory />}
+      <Footer />
     </div>
   );
 }
